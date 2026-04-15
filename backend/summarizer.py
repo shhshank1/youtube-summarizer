@@ -6,13 +6,20 @@ load_dotenv()
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-def summarize_transcript(transcript: str) -> dict:
+def summarize_transcript(transcript: str, mode: str = "short") -> dict:
+    if mode == "detailed":
+        summary_instruction = "A detailed summary in 6-8 sentences covering all major points"
+        takeaway_count = "8 key takeaways"
+    else:
+        summary_instruction = "A concise summary in 3-4 sentences"
+        takeaway_count = "5 key takeaways"
+
     prompt = f"""
 You are a helpful assistant that summarizes YouTube videos.
 
 Given the following transcript, provide:
-1. A clear summary (3-5 sentences)
-2. 5 key takeaways as bullet points
+1. {summary_instruction}
+2. {takeaway_count} as bullet points
 
 Transcript:
 {transcript}

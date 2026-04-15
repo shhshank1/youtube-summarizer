@@ -7,6 +7,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [mode, setMode] = useState("short");
 
   const handleSummarize = async () => {
     if (!url.trim()) return;
@@ -15,7 +16,7 @@ export default function App() {
     setResult(null);
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/summarize", { url });
+      const res = await axios.post("http://127.0.0.1:8000/summarize", { url, mode });
       setResult(res.data);
     } catch (err) {
       setError(err.response?.data?.detail || "Something went wrong");
@@ -55,6 +56,22 @@ export default function App() {
           className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-6 py-3 rounded-xl font-semibold text-sm transition"
         >
           {loading ? "Summarizing..." : "Summarize"}
+        </button>
+      </div>
+
+      {/* Mode toggle */}
+      <div className="w-full max-w-2xl flex gap-2 mt-3">
+        <button
+          onClick={() => setMode("short")}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition ${mode === "short" ? "bg-red-600 text-white" : "bg-gray-800 text-gray-400 hover:bg-gray-700"}`}
+        >
+          Short
+        </button>
+        <button
+          onClick={() => setMode("detailed")}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition ${mode === "detailed" ? "bg-red-600 text-white" : "bg-gray-800 text-gray-400 hover:bg-gray-700"}`}
+        >
+          Detailed
         </button>
       </div>
 

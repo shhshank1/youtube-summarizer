@@ -16,6 +16,7 @@ app.add_middleware(
 
 class VideoRequest(BaseModel):
     url: str
+    mode: str = "short"
 
 def extract_video_id(url: str) -> str:
     if "v=" in url:
@@ -41,5 +42,5 @@ def summarize_video(request: VideoRequest):
     except NoTranscriptFound:
         raise HTTPException(status_code=400, detail="No transcript found for this video")
 
-    result = summarize_transcript(transcript_text)
+    result = summarize_transcript(transcript_text, request.mode)
     return result
