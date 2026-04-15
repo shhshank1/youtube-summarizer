@@ -6,6 +6,7 @@ export default function App() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const handleSummarize = async () => {
     if (!url.trim()) return;
@@ -23,39 +24,74 @@ export default function App() {
     }
   };
 
-  return (
-    <div style={{ maxWidth: 700, margin: "60px auto", fontFamily: "sans-serif", padding: "0 20px" }}>
-      <h1>YouTube Summarizer</h1>
-      <p>Paste a YouTube URL and get a summary + key takeaways</p>
+  const handleCopy = () => {
+    const text = `SUMMARY:\n${result.summary}\n\nKEY TAKEAWAYS:\n${result.key_takeaways.map((t, i) => `${i + 1}. ${t}`).join("\n")}`;
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
-      <div style={{ display: "flex", gap: 8, marginTop: 20 }}>
+  return (
+    <div className="min-h-screen bg-gray-950 text-white flex flex-col items-center px-4 py-16">
+      {/* Header */}
+      <div className="mb-10 text-center">
+        <h1 className="text-4xl font-bold text-white mb-2">YouTube Summarizer</h1>
+        <p className="text-gray-400">Paste a YouTube URL and get an instant AI summary</p>
+      </div>
+
+      {/* Input */}
+      <div className="w-full max-w-2xl flex gap-3">
         <input
           type="text"
           placeholder="https://www.youtube.com/watch?v=..."
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          style={{ flex: 1, padding: "10px", fontSize: 14, borderRadius: 6, border: "1px solid #ccc" }}
+          onKeyDown={(e) => e.key === "Enter" && handleSummarize()}
+          className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm outline-none focus:border-red-500 transition"
         />
         <button
           onClick={handleSummarize}
           disabled={loading}
-          style={{ padding: "10px 20px", background: "#e00", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 14 }}
+          className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-6 py-3 rounded-xl font-semibold text-sm transition"
         >
           {loading ? "Summarizing..." : "Summarize"}
         </button>
       </div>
 
-      {error && <p style={{ color: "red", marginTop: 16 }}>{error}</p>}
+      {/* Error */}
+      {error && (
+        <p className="mt-4 text-red-400 text-sm">{error}</p>
+      )}
 
+      {/* Loading spinner */}
+      {loading && (
+        <div className="mt-12 flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-gray-700 border-t-red-500 rounded-full animate-spin"></div>
+          <p className="text-gray-400 text-sm">Fetching transcript and summarizing...</p>
+        </div>
+      )}
+
+      {/* Result */}
       {result && (
-        <div style={{ marginTop: 32 }}>
-          <h2>Summary</h2>
-          <p>{result.summary}</p>
+        <div className="mt-10 w-full max-w-2xl bg-gray-900 border border-gray-800 rounded-2xl p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold text-white">Summary</h2>
+            <button
+              onClick={handleCopy}
+              className="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-1.5 rounded-lg transition"
+            >
+              {copied ? "Copied!" : "Copy"}
+            </button>
+          </div>
+          <p className="text-gray-300 text-sm leading-relaxed mb-6">{result.summary}</p>
 
-          <h2>Key Takeaways</h2>
-          <ul>
+          <h2 className="text-lg font-semibold text-white mb-3">Key Takeaways</h2>
+          <ul className="space-y-2">
             {result.key_takeaways.map((point, i) => (
-              <li key={i} style={{ marginBottom: 8 }}>{point}</li>
+              <li key={i} className="flex gap-3 text-sm text-gray-300">
+                <span className="text-red-500 font-bold">{i + 1}.</span>
+                {point}
+              </li>
             ))}
           </ul>
         </div>
