@@ -35,7 +35,9 @@ def summarize_video(request: VideoRequest):
 
     try:
         ytt_api = YouTubeTranscriptApi()
-        transcript_data = ytt_api.fetch(video_id)
+        transcript_list = ytt_api.list(video_id)
+        transcript = transcript_list.find_transcript(['hi', 'en'])
+        transcript_data = transcript.fetch()
         transcript_text = " ".join([entry.text for entry in transcript_data])
     except TranscriptsDisabled:
         raise HTTPException(status_code=400, detail="Transcripts are disabled for this video")
