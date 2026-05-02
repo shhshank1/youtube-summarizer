@@ -16,7 +16,7 @@ export default function App() {
     setResult(null);
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/summarize", { url, mode });
+      const res = await axios.post("https://youtube-summarizer-9oks.onrender.com", { url, mode });
       setResult(res.data);
     } catch (err) {
       setError(err.response?.data?.detail || "Something went wrong");
