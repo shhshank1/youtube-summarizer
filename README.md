@@ -53,5 +53,7 @@ AI-powered web application that extracts YouTube video transcripts and generates
 - RAG-based video question answering
 
 ## Author
-
 Built as a project to explore modern AI application development, prompt engineering, and production-grade LLM integrations.
+
+## Known Limitation
+- Transcript extraction may not work consistently on cloud deployments due to YouTube restrictions on certain server IP addresses used by hosting providers.
